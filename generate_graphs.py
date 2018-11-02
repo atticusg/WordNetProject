@@ -1,7 +1,8 @@
 from nltk.corpus import wordnet as wn
 import snap
-def generate_meaning_graph(hyp, poly, mero, filename):
-    G1 = snap.TNGraph.New()
+import matplotlib.pyplot as plt
+def generate_meaning_graph(hyp, poly, holo):
+    G1 = snap.TUNGraph.New()
     hypedges = set()
     holoedges = set()
     polyedges = set()
@@ -23,14 +24,16 @@ def generate_meaning_graph(hyp, poly, mero, filename):
                 for synset2 in wn.synsets(lemma_name, "n"):
                     G1.AddEdge(synsetToId[synset], synsetToId[synset2])
                     polyedges.add((synsetToId[synset], synsetToId[synset2]))
-        if mero:
+        if holo:
             for synset2 in synset.member_holonyms() + synset.part_holonyms() + synset.substance_holonyms():
                 G1.AddEdge(synsetToId[synset], synsetToId[synset2])
                 holoedges.add((synsetToId[synset], synsetToId[synset2]))
+    snap.DelSelfEdges(G1)
+    return G1,idToSynset, synsetToId, hypedges, polyedges, holoedges
 
 
-def generate_word_graph(hyp, poly, mero,filename):
-    G1 = snap.TNGraph.New()
+def generate_word_graph(hyp, poly, holo):
+    G1 = snap.TUNGraph.New()
     hypedges = set()
     holoedges = set()
     polyedges = set()
@@ -54,11 +57,10 @@ def generate_word_graph(hyp, poly, mero,filename):
                     lemma_name2 = lemma_name2.lower()
                     G1.AddEdge(lemmaToId[lemma_name], lemmaToId[lemma_name2])
                     polyedges.add((lemmaToId[lemma_name], lemmaToId[lemma_name2]))
-        if mero:
+        if holo:
             for lemma in wn.lemmas(lemma_name, "n"):
                 for lemma2 in lemma.member_holonyms() + lemma.part_holonyms() + lemma.substance_holonyms():
                     G1.AddEdge(lemmaToId[lemma_name], lemmaToId[lemma2.name()])
                     hypedges.add((lemmaToId[lemma_name], lemmaToId[lemma2.name()]))
-
-generate_word_graph(True,True,True, "meme")
-generate_meaning_graph(True,True,True, "meme")
+    snap.DelSelfEdges(G1)
+    return G1, idToLemma, lemmaToId, hypedges, polyedges, holoedges
