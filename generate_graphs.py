@@ -2,7 +2,10 @@ from nltk.corpus import wordnet as wn
 import numpy as np
 import snap
 import random
+import matplotlib
+#matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
+
 def generate_meaning_graph(hyp, poly, holo):
     G1 = snap.TUNGraph.New()
     hypedges = set()
