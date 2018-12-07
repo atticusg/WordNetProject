@@ -5,18 +5,24 @@ import random
 import matplotlib
 matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
+numImp = 9
 
 def generate_meaning_graph(hyp, poly, holo):
+    global numImp
     G1 = snap.TUNGraph.New()
+    print wn.synsets('festoon')
     hypedges = set()
     holoedges = set()
     polyedges = set()
     idToSynset = dict()
     synsetToId = dict()
     count = 0
+    numEl = 0
     for synset in list(wn.all_synsets('n')):
-        if count == 1000:
-            break
+        if synset == wn.synset('benthos.n.01'):
+            print synset
+            numImp = count
+            print count
         G1.AddNode(count)
         idToSynset[count] = synset
         synsetToId[synset] = count
@@ -81,14 +87,16 @@ def makeHist(d):
     n  = plt.plot([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20], d)
     plt.xlabel('Value')
     plt.ylabel('Frequency')
-    plt.title('Histogram')
+    name = "_word_holo_benthos"
+    plt.title('Histogram'+ name)
     plt.show()
 
 def getFeat():
-    G1, id2, synset2, _,_,_ = generate_word_graph(True, False, False)
+    #G1, id2, synset2, _,_,_ = generate_word_graph(True, False, False)
+
     #G2, id2, synset2, _,_,_ = generate_word_graph(False, True, False)
     #G3, id2, synset2, _,_,_ = generate_word_graph(False, False, True)
-    #G4, id2, synset2, _,_,_ = generate_meaning_graph(True, False, False)
+    G4, id2, synset2, _,_,_ = generate_meaning_graph(True, False, False)
     #G5, id2, synset2, _,_,_ = generate_meaning_graph(False, True, False)
     #G6, id2, synset2, _,_,_ = generate_meaning_graph(False, False, True)
     #G7, id2, synset2, _,_,_ = generate_meaning_graph(True, False, True)
@@ -96,10 +104,9 @@ def getFeat():
     degVec = {}
     egoNet = {}
     egoNetDeg = {}
-    G = G1
+    G = G4
     it = 0
     for node in G.Nodes():
-        print node.GetDeg(), it, "fet"
         it += 1
         deg = node.GetDeg()
         nodeName = node.GetId()
@@ -120,7 +127,7 @@ def getFeat():
                     commNeib += 1
         egoNet[nodeName]  = deg + commNeib/2
         egoNetDeg[nodeName] = egoNetDeg[nodeName] - commNeib - deg
-    print egoNet[9], egoNetDeg[9], degVec[9]
+    print egoNet[numImp], egoNetDeg[numImp], degVec[numImp]
 
     featDictOne = {}
     for el in G.Nodes():
@@ -137,7 +144,8 @@ def getFeat():
     getSim(featDictOne)
 
 def getSim(featDict):
-    feat9 = featDict[9]
+    print numImp
+    feat9 = featDict[numImp]
     featVec9 = np.asarray(feat9)
     squareY = np.power(featVec9,2)
     sumY = np.sum(squareY)
