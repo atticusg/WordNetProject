@@ -85,7 +85,7 @@ def generate_word_graph(hyp, poly, holo):
     G1.remove_edges_from(G1.selfloop_edges())
     return G1, idToLemma, lemmaToId, hypedges, polyedges, holoedges
 
-G1, id2, synset2, _,_,_ = generate_word_graph(False, True, False)
+G1, id1, synset1, _,_,_ = generate_word_graph(False, True, False)
 G2, id2, synset2, _,_,_ = generate_meaning_graph(False, True, False)
 print (G1.size(), len(G1))
 print (G2.size(), len(G2))
@@ -107,20 +107,25 @@ print ("here")
 count = 0
 listPar1 = {}
 listPar2 = {}
-for com in set(partition.values()) :
-    list_nodes = [nodes for nodes in partition.keys()
-    if partition[nodes] == com]
-    listPar1[count] = list_nodes
+for com in set(partition.keys()) :
+    bucket = partition[com]
+    if bucket in listPar1:
+        listVal = listPar1[bucket]
+        listVal.append(com)
+        listPar1[bucket] = listVal
+    else:
+        listPar1[bucket] = [com]
     count += 1
-print (count)
+    print (count, "1")
 count = 0
-
+with open('fileDictWord.json', 'w') as outfile:
+    json.dump(listPar1, outfile)
 for com in set(partition2.values()) :
+    print (count, "2")
     list_nodes = [nodes for nodes in partition2.keys()
     if partition2[nodes] == com]
     listPar2[count] = list_nodes
     count += 1
-with open('fileDictWord.txt', 'w+') as file:
-     file.write(json.dumps(listPar1))
-with open('fileDictMeaning.txt', 'w+') as file:
-     file.write(json.dumps(listPar2))
+
+with open('fileDictMeaning.json', 'w') as outfile:
+    json.dump(listPar2, outfile)
