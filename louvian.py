@@ -85,47 +85,55 @@ def generate_word_graph(hyp, poly, holo):
     G1.remove_edges_from(G1.selfloop_edges())
     return G1, idToLemma, lemmaToId, hypedges, polyedges, holoedges
 
-G1, id1, synset1, _,_,_ = generate_word_graph(False, True, False)
-G2, id2, synset2, _,_,_ = generate_meaning_graph(False, True, False)
+G1, id1, synset1, _,_,_ = generate_word_graph(True, False, False)
+G2, id2, synset2, _,_,_ = generate_meaning_graph(True, False, False)
 print (G1.size(), len(G1))
 print (G2.size(), len(G2))
 print ("yes")
-partition = community_louvain.best_partition(G1)
-partition2 = community_louvain.best_partition(G2)
-# dendo = community_louvain.generate_dendrogram(G1)
-# for level in range(len(dendo) - 1) :
-#      newPart = community_louvain.partition_at_level(dendo, level)
-#      print("partition at level", level, "is", newPart)
-#      size = float(len(set(newPart.values())))
-#      print (size, level, "size")
-size1 = float(len(set(partition.values())))
-size2 = float(len(set(partition2.values())))
-print (size1, size2)
-print ("here")
-nx.write_graphml(G1, "testG1.graphml")
-print ("here")
-count = 0
-listPar1 = {}
-listPar2 = {}
-for com in set(partition.keys()) :
-    bucket = partition[com]
-    if bucket in listPar1:
-        listVal = listPar1[bucket]
-        listVal.append(com)
-        listPar1[bucket] = listVal
-    else:
-        listPar1[bucket] = [com]
-    count += 1
-    print (count, "1")
-count = 0
-with open('fileDictWord.json', 'w') as outfile:
-    json.dump(listPar1, outfile)
-for com in set(partition2.values()) :
-    print (count, "2")
-    list_nodes = [nodes for nodes in partition2.keys()
-    if partition2[nodes] == com]
-    listPar2[count] = list_nodes
-    count += 1
-
-with open('fileDictMeaning.json', 'w') as outfile:
-    json.dump(listPar2, outfile)
+#partition = community_louvain.best_partition(G1)
+#partition2 = community_louvain.best_partition(G2)
+dendo = community_louvain.generate_dendrogram(G1)
+for level in range(len(dendo)) :
+    newPart = community_louvain.partition_at_level(dendo, level)
+    #print("partition at level", level, "is", newPart)
+    size = float(len(set(newPart.values())))
+    print (size, level, "size")
+#size1 = float(len(set(partition.values())))
+#size2 = float(len(set(partition2.values())))
+dendo2 = community_louvain.generate_dendrogram(G2)
+for level in range(len(dendo2)) :
+    newPart = community_louvain.partition_at_level(dendo2, level)
+    #print("partition at level", level, "is", newPart)
+    size = float(len(set(newPart.values())))
+    print (size, level, "size2")
+#size1 = float(len(set(partition.values())))
+#size2 = float(len(set(partition2.values())))
+#print (size1, size2)
+# print ("here")
+# nx.write_graphml(G1, "testG1.graphml")
+# print ("here")
+# count = 0
+# listPar1 = {}
+# listPar2 = {}
+# for com in set(partition.keys()) :
+#     bucket = partition[com]
+#     if bucket in listPar1:
+#         listVal = listPar1[bucket]
+#         listVal.append(com)
+#         listPar1[bucket] = listVal
+#     else:
+#         listPar1[bucket] = [com]
+#     count += 1
+#     print (count, "1")
+# count = 0
+# with open('fileDictWord.json', 'w') as outfile:
+#     json.dump(listPar1, outfile)
+# for com in set(partition2.values()) :
+#     print (count, "2")
+#     list_nodes = [nodes for nodes in partition2.keys()
+#     if partition2[nodes] == com]
+#     listPar2[count] = list_nodes
+#     count += 1
+#
+# with open('fileDictMeaning.json', 'w') as outfile:
+#     json.dump(listPar2, outfile)
